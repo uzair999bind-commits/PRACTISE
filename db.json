@@ -35,6 +35,40 @@
       "description": "The peak of Ducati engineering. The Panigale V4 S brings MotoGP performance directly to the street with electronic Öhlins Smart EC 2.0 suspension, aluminum forged rims, and carbon winglets."
     },
     {
+      "id": "bike-11",
+      "brand": "KTM",
+      "model": "450 EXC-F Hill Climb Monster",
+      "year": 2026,
+      "price": 16800,
+      "discount": 0,
+      "engine": "449.9 cc Single Cylinder 4-Stroke DOHC",
+      "power": "63 HP @ 9,800 RPM",
+      "torque": "52 Nm @ 7,500 RPM",
+      "topSpeed": "185 km/h",
+      "transmission": "6-speed PANKL with Hill Climb Paddle Drive",
+      "fuelType": "Petrol",
+      "mileage": "22.0 km/l",
+      "category": "Off-Road",
+      "stock": 5,
+      "reserved": 0,
+      "sold": 2,
+      "availability": "In Stock",
+      "isNew": true,
+      "isFeatured": true,
+      "isPreOrder": false,
+      "isVisible": true,
+      "badges": ["Hill Climb Monster", "Featured", "Extreme Off-Road"],
+      "colors": [
+        {"name": "Factory Apex Orange", "hex": "#f95738"},
+        {"name": "Dirt Stealth Grey", "hex": "#2b2d42"},
+        {"name": "Nitro Lime", "hex": "#2a9d8f"}
+      ],
+      "image": "https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=1200&q=80",
+      "warranty": "2 Years International Factory Warranty",
+      "dimensions": "Seat Height: 960 mm | Weight: 105.5 kg (Dry)",
+      "description": "Engineered specifically for vertical rock slopes, dune carving, and extreme hill climb racing competitions. Features extended rear swingarm, knobby paddle tires, WP XACT suspension, and ultra-high torque tuning."
+    },
+    {
       "id": "bike-2",
       "brand": "BMW Motorrad",
       "model": "S1000RR M Package",
@@ -355,7 +389,7 @@
     {"id": "cat-7", "name": "Cafe Racers", "description": "Classic 1960s British racer heritage with modern tech.", "count": 7},
     {"id": "cat-8", "name": "Scooters", "description": "Urban mobility, maximum efficiency, premium elegance.", "count": 9},
     {"id": "cat-9", "name": "Electric Bikes", "description": "Zero emissions, instant torque, futuristic silent power.", "count": 5},
-    {"id": "cat-10", "name": "Off-Road", "description": "Lightweight dual-sport machines built to dominate dirt.", "count": 11}
+    {"id": "cat-10", "name": "Off-Road", "description": "Lightweight dual-sport machines built to dominate dirt and vertical hills.", "count": 12}
   ],
   "orders": [],
   "preOrders": [],
