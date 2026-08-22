@@ -1,5 +1,5 @@
 /**
- * Admin Component - Isolated Admin Management Console for UZair Showroom
+ * Admin Component - Isolated Admin Management Console for ROYAL BIKE SHOWROOM
  */
 
 const AdminComponent = {
@@ -61,7 +61,7 @@ const AdminComponent = {
         
         <div class="flex items-center justify-between border-b border-gray-900 pb-4">
           <div>
-            <h3 class="font-extrabold text-white text-xl">Uzair Showroom Telemetry Overview</h3>
+            <h3 class="font-extrabold text-white text-xl">Royal Bike Showroom Telemetry Overview</h3>
             <p class="text-xs text-gray-400">Live inventory, pre-orders & financial analytics</p>
           </div>
           <button onclick="app.openAddBikeModal()" class="px-4 py-2.5 bg-gray-200 text-black font-bold text-xs rounded-xl shadow flex items-center gap-2">
