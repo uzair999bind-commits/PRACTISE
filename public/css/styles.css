@@ -1,0 +1,71 @@
+/* Luxury Dark Metallic & 3D Architectural Pavilion CSS for UZair Showroom */
+
+@keyframes spin-slow {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes float-luxury {
+  0%, 100% { transform: translateY(0px) rotateX(0deg); }
+  50% { transform: translateY(-6px) rotateX(1deg); }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 16s linear infinite;
+}
+
+.animate-float {
+  animation: float-luxury 6s ease-in-out infinite;
+}
+
+/* 3D Architectural Section Background Texture */
+.bg-3d-pavilion {
+  background-color: #050508;
+  background-image: 
+    radial-gradient(circle at 50% 20%, rgba(197, 160, 89, 0.08) 0%, transparent 60%),
+    linear-gradient(rgba(24, 27, 34, 0.6) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(24, 27, 34, 0.6) 1px, transparent 1px);
+  background-size: 100% 100%, 40px 40px, 40px 40px;
+}
+
+/* Glassmorphism Luxury Panel */
+.glass-panel {
+  background: rgba(11, 12, 16, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(220, 220, 220, 0.12);
+  box-shadow: 0 10px 40px 0 rgba(0, 0, 0, 0.8);
+}
+
+.glass-panel-hover:hover {
+  border-color: rgba(197, 160, 89, 0.5);
+  box-shadow: 0 15px 50px 0 rgba(0, 0, 0, 0.95);
+  transform: translateY(-4px);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+
+::-webkit-scrollbar-track {
+  background: #050508;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #181b22;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #c5a059;
+}
+
+/* Metallic Gradient Text */
+.metallic-text {
+  background: linear-gradient(135deg, #ffffff 0%, #a8aabc 50%, #e0e1dd 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}

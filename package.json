@@ -1,0 +1,12 @@
+{
+  "name": "uzair-bike-showroom",
+  "version": "1.0.0",
+  "description": "Premium Futuristic 3D Motorcycle Showroom Website",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": ["motorcycle", "3d", "showroom", "threejs", "futuristic", "ecommerce"],
+  "author": "UZair Showroom Team",
+  "license": "ISC"
+}

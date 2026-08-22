@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="en" class="dark scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UZair Showroom — We are here to serve you.</title>
+  
+  <!-- Google Fonts: Luxury Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@400;600;700;900&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            luxury: {
+              black: '#050508',
+              charcoal: '#0b0c10',
+              metallic: '#181a20',
+              silver: '#e0e1dd',
+              gold: '#c5a059',
+              accent: '#3a86ff'
+            }
+          },
+          fontFamily: {
+            cinzel: ['Cinzel', 'serif'],
+            orbitron: ['Orbitron', 'sans-serif'],
+            sans: ['Inter', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+  
+  <!-- Lucide Icons & Three.js -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+  <!-- Custom Luxury CSS with Cache-Busting -->
+  <link rel="stylesheet" href="css/styles.css?v=9.0" />
+</head>
+<body class="bg-[#050508] text-gray-200 font-sans antialiased selection:bg-gray-700 selection:text-white overflow-x-hidden relative">
+
+  <!-- FULL PAGE INTERACTIVE 3D WEBGL BACKGROUND ANIMATION CANVAS -->
+  <canvas id="global-3d-bg-canvas" class="fixed inset-0 z-0 pointer-events-none w-full h-full"></canvas>
+
+  <!-- ================= 1. LUXURY PRELOADER ================= -->
+  <div id="preloader" class="fixed inset-0 z-[100] bg-[#050508] flex flex-col items-center justify-center transition-opacity duration-700">
+    <div class="relative flex items-center justify-center w-36 h-36">
+      <div class="absolute inset-0 rounded-full border border-gray-800 border-t-luxury-gold animate-spin"></div>
+      <div class="text-luxury-silver font-cinzel font-bold text-lg tracking-widest">UZAIR</div>
+    </div>
+    <div class="mt-8 font-cinzel text-xs tracking-[0.3em] text-gray-400 uppercase">
+      INITIALIZING LUXURY SHOWROOM... <span id="preload-percentage" class="text-luxury-gold">0%</span>
+    </div>
+    <div class="w-64 h-0.5 bg-gray-900 mt-4 overflow-hidden rounded-full">
+      <div id="preload-bar" class="h-full bg-gradient-to-r from-gray-700 via-luxury-gold to-gray-400 w-0 transition-all duration-300"></div>
+    </div>
+  </div>
+
+  <!-- Audio SFX Toggle Floating Button -->
+  <button id="sfx-toggle" onclick="app.toggleSFX()" class="fixed bottom-6 right-6 z-40 bg-gray-950/90 backdrop-blur border border-gray-800 text-gray-300 p-3 rounded-full shadow-2xl hover:border-luxury-gold hover:text-luxury-gold hover:scale-105 transition flex items-center gap-2 group">
+    <i data-lucide="volume-2" id="sfx-icon" class="w-5 h-5"></i>
+    <span class="text-xs font-cinzel max-w-0 overflow-hidden group-hover:max-w-xs transition-all duration-300 whitespace-nowrap pr-1">Audio SFX</span>
+  </button>
+
+  <!-- ================= CUSTOMER SHOWROOM VIEW ================= -->
+  <div id="customer-view" class="relative z-10">
+
+    <!-- STICKY LUXURY NAVIGATION -->
+    <header class="fixed top-0 left-0 right-0 z-50 bg-[#050508]/85 backdrop-blur-md border-b border-gray-900/80 transition-all duration-300" id="main-header">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-24 flex items-center justify-between">
+        
+        <!-- Logo -->
+        <a href="#hero" class="flex items-center gap-3 group">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-gray-700 via-gray-900 to-black p-[1px] border border-gray-800 shadow-xl">
+            <div class="w-full h-full bg-gray-950 rounded-[10px] flex items-center justify-center text-luxury-gold">
+              <i data-lucide="shield" class="w-5 h-5"></i>
+            </div>
+          </div>
+          <div>
+            <span class="font-cinzel font-black text-xl tracking-wider text-white group-hover:text-luxury-gold transition">UZair</span>
+            <span class="font-cinzel text-[10px] tracking-[0.3em] text-gray-400 block -mt-1 font-semibold uppercase">Showroom</span>
+          </div>
+        </a>
+
+        <!-- Nav Links -->
+        <nav class="hidden lg:flex items-center gap-8 text-xs font-cinzel font-semibold tracking-[0.15em] text-gray-300">
+          <a href="#hero" class="hover:text-luxury-gold transition hover:scale-105 transform">Home</a>
+          <a href="#brands" class="hover:text-luxury-gold transition hover:scale-105 transform">Brands</a>
+          <a href="#featured" class="hover:text-luxury-gold transition hover:scale-105 transform">Featured</a>
+          <a href="#categories" class="hover:text-luxury-gold transition hover:scale-105 transform">Categories</a>
+          <a href="#gallery" class="hover:text-luxury-gold transition hover:scale-105 transform">Bikes</a>
+          <a href="#about" class="hover:text-luxury-gold transition hover:scale-105 transform">About</a>
+          <a href="#contact" class="hover:text-luxury-gold transition hover:scale-105 transform">Contact</a>
+        </nav>
+
+        <!-- Right Tools -->
+        <div class="flex items-center gap-4">
+          <button onclick="app.openSearch()" class="p-2.5 text-gray-300 hover:text-luxury-gold transition bg-gray-950 rounded-xl border border-gray-800">
+            <i data-lucide="search" class="w-5 h-5"></i>
+          </button>
+
+          <button onclick="app.openCart()" class="relative p-2.5 text-gray-300 hover:text-luxury-gold transition bg-gray-950 rounded-xl border border-gray-800">
+            <i data-lucide="shopping-bag" class="w-5 h-5"></i>
+            <span id="cart-count" class="absolute -top-1 -right-1 w-5 h-5 bg-luxury-gold text-black font-bold text-[10px] font-orbitron rounded-full flex items-center justify-center shadow-lg">0</span>
+          </button>
+
+          <!-- Admin Portal Link -->
+          <a href="#/admin" onclick="app.openAdminRoute(event)" class="hidden sm:flex items-center gap-2 px-3.5 py-2 text-[10px] font-cinzel font-bold tracking-widest text-gray-300 hover:text-luxury-gold bg-gray-950 border border-gray-800 hover:border-luxury-gold/50 rounded-xl transition">
+            <i data-lucide="shield" class="w-3.5 h-3.5 text-luxury-gold"></i>
+            <span>ADMIN</span>
+          </a>
+
+          <button onclick="app.toggleMobileMenu()" class="lg:hidden p-2 text-gray-300 hover:text-white">
+            <i data-lucide="menu" class="w-6 h-6"></i>
+          </button>
+        </div>
+
+      </div>
+
+      <!-- Mobile Menu -->
+      <div id="mobile-menu" class="hidden lg:hidden bg-gray-950/95 backdrop-blur-xl border-b border-gray-900 px-6 py-4 flex flex-col gap-4 text-xs font-cinzel tracking-wider">
+        <a href="#hero" onclick="app.toggleMobileMenu()" class="text-gray-300 hover:text-luxury-gold">Home</a>
+        <a href="#brands" onclick="app.toggleMobileMenu()" class="text-gray-300 hover:text-luxury-gold">Brands</a>
+        <a href="#featured" onclick="app.toggleMobileMenu()" class="text-gray-300 hover:text-luxury-gold">Featured</a>
+        <a href="#categories" onclick="app.toggleMobileMenu()" class="text-gray-300 hover:text-luxury-gold">Categories</a>
+        <a href="#gallery" onclick="app.toggleMobileMenu()" class="text-gray-300 hover:text-luxury-gold">Bikes</a>
+        <a href="#about" onclick="app.toggleMobileMenu()" class="text-gray-300 hover:text-luxury-gold">About</a>
+        <a href="#contact" onclick="app.toggleMobileMenu()" class="text-gray-300 hover:text-luxury-gold">Contact</a>
+        <a href="#/admin" onclick="app.openAdminRoute(event); app.toggleMobileMenu()" class="text-luxury-gold font-bold flex items-center gap-2 py-2">
+          <i data-lucide="shield" class="w-4 h-4"></i> Access Admin Portal
+        </a>
+      </div>
+    </header>
+
+    <!-- MAIN HERO & SECTIONS -->
+    <main class="relative z-10 pt-24">
+
+      <!-- ================= 2. CINEMATIC 3D HERO SECTION ================= -->
+      <section id="hero" class="relative min-h-[92vh] flex items-center justify-center overflow-hidden py-16 lg:py-0">
+        
+        <!-- 3D Three.js Marble Floor & Showroom Canvas -->
+        <div id="hero-3d-container" class="absolute inset-0 z-0"></div>
+
+        <!-- Luxury Dark Vignette -->
+        <div class="absolute inset-0 bg-gradient-to-t from-[#050508] via-transparent to-[#050508]/90 pointer-events-none z-1"></div>
+        <div class="absolute inset-0 bg-gradient-to-r from-[#050508]/90 via-transparent to-[#050508]/90 pointer-events-none z-1"></div>
+
+        <!-- Hero Content -->
+        <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+          
+          <div class="lg:col-span-6 space-y-6 text-center lg:text-left">
+            
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-gray-950/80 border border-gray-800 text-gray-300 font-cinzel text-xs tracking-widest uppercase">
+              <span class="w-2 h-2 rounded-full bg-luxury-gold animate-pulse"></span>
+              FLAGSHIP AUTOMOTIVE PAVILION
+            </div>
+
+            <!-- Welcome Text Exact Specs -->
+            <h1 class="text-4xl sm:text-6xl font-cinzel font-black tracking-tight text-white leading-tight">
+              Welcome to <span class="bg-gradient-to-r from-white via-luxury-silver to-luxury-gold bg-clip-text text-transparent">Uzair Showroom</span>
+            </h1>
+
+            <h3 class="font-cinzel text-xl sm:text-2xl text-gray-300 font-bold tracking-wider italic">
+              We are here to serve you.
+            </h3>
+
+            <p class="text-gray-400 max-w-xl mx-auto lg:mx-0 text-sm sm:text-base font-light leading-relaxed">
+              Step into an international luxury 3D motorcycle showroom. Explore precision engineering, world-class super-machines, and hyperbike masterpieces physically standing inside our marble pavilion.
+            </p>
+
+            <!-- Primary & Secondary CTAs -->
+            <div class="flex flex-wrap items-center justify-center lg:justify-start gap-5 pt-4">
+              <a href="#gallery" class="px-8 py-4 bg-gradient-to-r from-gray-200 via-luxury-silver to-white hover:from-white hover:to-gray-200 text-black font-cinzel font-bold text-xs tracking-[0.2em] uppercase rounded-xl shadow-2xl hover:scale-105 transition transform flex items-center gap-2">
+                <i data-lucide="compass" class="w-4 h-4"></i>
+                EXPLORE BIKES
+              </a>
+              <a href="#brands" class="px-8 py-4 bg-gray-950/90 hover:bg-gray-900 text-luxury-silver border border-gray-800 hover:border-luxury-gold font-cinzel font-bold text-xs tracking-[0.2em] uppercase rounded-xl shadow-xl hover:scale-105 transition transform flex items-center gap-2">
+                <i data-lucide="award" class="w-4 h-4 text-luxury-gold"></i>
+                EXPLORE BRANDS
+              </a>
+            </div>
+
+            <!-- Quick Telemetry Bar -->
+            <div class="grid grid-cols-3 gap-6 pt-8 max-w-lg mx-auto lg:mx-0 border-t border-gray-900">
+              <div>
+                <div class="font-cinzel font-bold text-xl sm:text-2xl text-white">10</div>
+                <div class="text-[11px] text-gray-400 font-medium">Major Manufacturers</div>
+              </div>
+              <div>
+                <div class="font-cinzel font-bold text-xl sm:text-2xl text-white">337 km/h</div>
+                <div class="text-[11px] text-gray-400 font-medium">Top Speed Baseline</div>
+              </div>
+              <div>
+                <div class="font-cinzel font-bold text-xl sm:text-2xl text-white">360°</div>
+                <div class="text-[11px] text-gray-400 font-medium">Interactive 3D Studio</div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Photorealistic 3D Showcase Stage -->
+          <div class="lg:col-span-6 flex flex-col items-center justify-center">
+            <div class="relative group cursor-pointer w-full max-w-lg" onclick="app.openDetailsModal('bike-1')">
+              
+              <div class="absolute -inset-4 bg-gradient-to-r from-luxury-gold/30 via-amber-500/20 to-luxury-silver/30 rounded-3xl blur-2xl group-hover:scale-105 transition duration-700"></div>
+
+              <div class="relative bg-gradient-to-b from-gray-900/90 via-gray-950 to-black border border-luxury-gold/50 p-6 rounded-3xl shadow-2xl space-y-4">
+                
+                <div class="relative h-64 sm:h-72 w-full flex items-center justify-center overflow-hidden rounded-2xl bg-black/60 p-2">
+                  <img id="hero-flagship-img" 
+                       src="https://images.unsplash.com/photo-1568772585407-9361f9bf3a87?auto=format&fit=crop&w=1200&q=80" 
+                       alt="Ducati Panigale V4 S" 
+                       class="max-h-full object-contain filter drop-shadow-[0_25px_35px_rgba(0,0,0,0.95)] group-hover:scale-110 transition duration-700" />
+                  
+                  <div class="absolute top-3 left-3 bg-black/80 backdrop-blur border border-luxury-gold/40 text-luxury-gold font-cinzel text-[10px] font-bold px-3 py-1 rounded-xl">
+                    ★ FLAGSHIP SUPERBIKE
+                  </div>
+                  
+                  <div class="absolute bottom-3 right-3 bg-black/80 backdrop-blur border border-gray-800 text-white font-cinzel text-xs font-bold px-3 py-1 rounded-xl">
+                    $32,995
+                  </div>
+                </div>
+
+                <div class="flex items-center justify-between font-cinzel">
+                  <div>
+                    <h3 class="font-extrabold text-white text-lg">Ducati Panigale V4 S</h3>
+                    <p class="text-xs text-luxury-gold">1103 cc Desmosedici Stradale V4 &bull; 215.5 HP</p>
+                  </div>
+                  <button class="px-4 py-2.5 bg-gradient-to-r from-luxury-silver to-white text-black font-bold text-xs rounded-xl shadow group-hover:scale-105 transition">
+                    360° INSPECT
+                  </button>
+                </div>
+
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- ================= 3. 10 MAJOR BRANDS SHOWCASE (3D PAVILION BG) ================= -->
+      <section id="brands" class="py-24 relative bg-3d-pavilion border-t border-gray-900">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          
+          <div class="text-center max-w-3xl mx-auto mb-16 space-y-3">
+            <div class="font-cinzel text-xs tracking-[0.3em] text-luxury-gold uppercase font-bold">WORLD-CLASS MANUFACTURERS</div>
+            <h2 class="text-3xl sm:text-5xl font-cinzel font-extrabold text-white">10 Major Motorcycle Brands</h2>
+            <div class="w-20 h-0.5 bg-gradient-to-r from-luxury-gold to-gray-500 mx-auto rounded-full mt-2"></div>
+            <p class="text-gray-400 text-xs sm:text-sm pt-2">Official warrantied distribution from the world's most prestigious motorcycle marques.</p>
+          </div>
+
+          <!-- 10 Brands 3D Luxury Vector Panels Grid -->
+          <div id="brands-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-5">
+            <!-- Rendered by Brands.js -->
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ================= 4. FEATURED MOTORCYCLES ================= -->
+      <section id="featured" class="py-24 relative bg-3d-pavilion">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          
+          <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6 border-b border-gray-900 pb-6">
+            <div class="space-y-2">
+              <div class="font-cinzel text-xs tracking-[0.3em] text-luxury-gold uppercase font-bold">CURATED SELECTION</div>
+              <h2 class="text-3xl sm:text-4xl font-cinzel font-extrabold text-white">Featured Motorcycles</h2>
+            </div>
+            <a href="#gallery" class="inline-flex items-center gap-2 text-luxury-silver hover:text-white font-cinzel text-xs tracking-wider">
+              <span>EXPLORE ALL INVENTORY</span>
+              <i data-lucide="arrow-right" class="w-4 h-4"></i>
+            </a>
+          </div>
+
+          <div id="featured-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- Rendered by Featured.js -->
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ================= 5. MOTORCYCLE CATEGORIES ================= -->
+      <section id="categories" class="py-24 relative bg-3d-pavilion border-y border-gray-900">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          
+          <div class="text-center max-w-3xl mx-auto mb-16 space-y-3">
+            <div class="font-cinzel text-xs tracking-[0.3em] text-luxury-gold uppercase font-bold">DISPLACEMENT SPECTRUM</div>
+            <h2 class="text-3xl sm:text-4xl font-cinzel font-extrabold text-white">Motorcycle Categories</h2>
+            <div class="w-16 h-0.5 bg-luxury-gold mx-auto rounded-full"></div>
+          </div>
+
+          <div id="categories-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
+            <!-- Rendered by Categories.js -->
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ================= 6. 3D PRODUCT GALLERY CATALOG ================= -->
+      <section id="gallery" class="py-24 relative min-h-screen bg-3d-pavilion">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+          
+          <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-6 border-b border-gray-900 pb-8">
+            <div class="space-y-2">
+              <div class="font-cinzel text-xs tracking-[0.3em] text-luxury-gold uppercase font-bold">SHOWROOM CATALOG</div>
+              <h2 class="text-3xl sm:text-5xl font-cinzel font-black text-white">3D Motorcycle Gallery</h2>
+            </div>
+
+            <div class="flex items-center gap-4">
+              <span id="gallery-count" class="text-xs font-cinzel text-gray-400">Showing 10 Motorcycles</span>
+            </div>
+          </div>
+
+          <!-- Filter Controls Bar -->
+          <div class="bg-gray-950/80 backdrop-blur border border-gray-900 rounded-3xl p-6 space-y-6">
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+              
+              <div>
+                <label class="block text-[10px] font-cinzel text-gray-400 mb-2 uppercase tracking-wider">BRAND</label>
+                <select id="filter-brand" onchange="app.applyFilters()" class="w-full bg-gray-900 border border-gray-800 rounded-xl px-3 py-2.5 text-xs text-gray-200 focus:border-luxury-gold focus:outline-none">
+                  <option value="all">All 10 Brands</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-[10px] font-cinzel text-gray-400 mb-2 uppercase tracking-wider">CATEGORY</label>
+                <select id="filter-category" onchange="app.applyFilters()" class="w-full bg-gray-900 border border-gray-800 rounded-xl px-3 py-2.5 text-xs text-gray-200 focus:border-luxury-gold focus:outline-none">
+                  <option value="all">All Categories</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-[10px] font-cinzel text-gray-400 mb-2 uppercase tracking-wider">AVAILABILITY</label>
+                <select id="filter-availability" onchange="app.applyFilters()" class="w-full bg-gray-900 border border-gray-800 rounded-xl px-3 py-2.5 text-xs text-gray-200 focus:border-luxury-gold focus:outline-none">
+                  <option value="all">All Statuses</option>
+                  <option value="In Stock">In Stock</option>
+                  <option value="Pre-Order Only">Pre-Order Only</option>
+                  <option value="Limited Stock">Limited Stock</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-[10px] font-cinzel text-gray-400 mb-2 uppercase tracking-wider">ENGINE CC</label>
+                <select id="filter-cc" onchange="app.applyFilters()" class="w-full bg-gray-900 border border-gray-800 rounded-xl px-3 py-2.5 text-xs text-gray-200 focus:border-luxury-gold focus:outline-none">
+                  <option value="all">Any Displacement</option>
+                  <option value="under500">Under 500 cc</option>
+                  <option value="500-1000">500 cc - 1000 cc</option>
+                  <option value="over1000">Over 1000 cc</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-[10px] font-cinzel text-gray-400 mb-2 uppercase tracking-wider">SORT BY</label>
+                <select id="filter-sort" onchange="app.applyFilters()" class="w-full bg-gray-900 border border-gray-800 rounded-xl px-3 py-2.5 text-xs text-gray-200 focus:border-luxury-gold focus:outline-none">
+                  <option value="featured">Featured First</option>
+                  <option value="price-asc">Price: Low to High</option>
+                  <option value="price-desc">Price: High to Low</option>
+                  <option value="newest">Newest Models</option>
+                </select>
+              </div>
+
+            </div>
+
+            <!-- Price Slider -->
+            <div class="pt-2 border-t border-gray-900 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div class="flex items-center gap-4 flex-1">
+                <span class="text-xs font-cinzel text-gray-400">MAX PRICE:</span>
+                <input type="range" id="filter-price-range" min="5000" max="100000" step="1000" value="100000" oninput="app.updatePriceLabel(this.value); app.applyFilters()" class="flex-1 accent-luxury-gold bg-gray-900 h-1 rounded-lg cursor-pointer" />
+                <span id="price-range-label" class="text-xs font-cinzel font-bold text-white">$100,000</span>
+              </div>
+              <button onclick="app.resetFilters()" class="text-xs font-cinzel text-gray-400 hover:text-luxury-gold transition flex items-center gap-1">
+                <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i> Reset Filters
+              </button>
+            </div>
+
+          </div>
+
+          <!-- Product Cards Grid -->
+          <div id="gallery-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- Rendered by Gallery.js -->
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ================= 7. ABOUT UZAIR SHOWROOM ================= -->
+      <section id="about" class="py-24 relative bg-3d-pavilion border-t border-gray-900">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+          
+          <div class="lg:col-span-6 space-y-6">
+            <div class="font-cinzel text-xs tracking-[0.3em] text-luxury-gold uppercase font-bold">LUXURY HERITAGE</div>
+            <h2 class="text-3xl sm:text-5xl font-cinzel font-black text-white leading-tight">
+              Uzair Showroom
+            </h2>
+            <p class="text-gray-300 leading-relaxed text-sm sm:text-base">
+              Built on a foundation of extreme mechanical craftsmanship and luxury retail excellence, <strong class="text-white">Uzair Showroom</strong> represents the world's most prestigious motorcycle marques.
+            </p>
+            <div class="space-y-4 pt-2">
+              <div class="flex items-start gap-4">
+                <div class="p-3 bg-gray-950 rounded-xl border border-gray-800 text-luxury-gold shrink-0">
+                  <i data-lucide="shield-check" class="w-6 h-6"></i>
+                </div>
+                <div>
+                  <h4 class="font-cinzel font-bold text-white text-base">Certified Factory Diagnostics</h4>
+                  <p class="text-xs text-gray-400 mt-1">Every machine undergoes a 120-point digital telemetry inspection prior to client handover.</p>
+                </div>
+              </div>
+              <div class="flex items-start gap-4">
+                <div class="p-3 bg-gray-950 rounded-xl border border-gray-800 text-luxury-silver shrink-0">
+                  <i data-lucide="wrench" class="w-6 h-6"></i>
+                </div>
+                <div>
+                  <h4 class="font-cinzel font-bold text-white text-base">Master Factory Technicians</h4>
+                  <p class="text-xs text-gray-400 mt-1">Factory-trained mechanics specialized in Ducati Corse, BMW ShiftCam, and Kawasaki Supercharged engines.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="lg:col-span-6">
+            <div class="relative rounded-3xl overflow-hidden border border-gray-800 p-2 bg-gray-950 shadow-2xl group">
+              <div class="relative aspect-video rounded-2xl overflow-hidden">
+                <img src="https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&w=1200&q=80" alt="Uzair Showroom Pavilion" class="w-full h-full object-cover group-hover:scale-105 transition duration-700 filter brightness-90 contrast-125" />
+                <div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent"></div>
+                <div class="absolute bottom-6 left-6 right-6 flex items-center justify-between">
+                  <div>
+                    <div class="font-cinzel font-bold text-white text-lg">FLAGSHIP 3D MARBLE PAVILION</div>
+                    <div class="text-xs text-luxury-gold">Karachi / San Francisco</div>
+                  </div>
+                  <a href="#contact" class="px-4 py-2 bg-gray-900/80 backdrop-blur border border-gray-700 text-white text-xs font-cinzel font-semibold rounded-xl hover:border-luxury-gold transition">
+                    VISIT UZAIR SHOWROOM
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ================= 8. CONTACT SECTION ================= -->
+      <section id="contact" class="py-24 relative bg-3d-pavilion">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+          
+          <div class="text-center max-w-2xl mx-auto space-y-2">
+            <div class="font-cinzel text-xs tracking-[0.3em] text-luxury-gold uppercase font-bold">CLIENT RECEPTION</div>
+            <h2 class="text-3xl sm:text-4xl font-cinzel font-extrabold text-white">Visit Uzair Showroom</h2>
+            <p class="text-gray-400 text-xs sm:text-sm">Schedule a private viewing session or contact our sales specialists.</p>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            
+            <div class="lg:col-span-7 bg-gray-950/80 backdrop-blur border border-gray-900 p-8 rounded-3xl space-y-6">
+              <h3 class="font-cinzel font-bold text-xl text-white">Client Inquiry Form</h3>
+              <form onsubmit="app.submitContactForm(event)" class="space-y-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label class="block text-[10px] font-cinzel text-gray-400 mb-1">FULL NAME</label>
+                    <input type="text" required placeholder="Alexander Sterling" class="w-full bg-gray-900 border border-gray-800 rounded-xl px-4 py-3 text-xs text-gray-100 focus:border-luxury-gold focus:outline-none" />
+                  </div>
+                  <div>
+                    <label class="block text-[10px] font-cinzel text-gray-400 mb-1">EMAIL ADDRESS</label>
+                    <input type="email" required placeholder="alexander@example.com" class="w-full bg-gray-900 border border-gray-800 rounded-xl px-4 py-3 text-xs text-gray-100 focus:border-luxury-gold focus:outline-none" />
+                  </div>
+                </div>
+                <div>
+                  <label class="block text-[10px] font-cinzel text-gray-400 mb-1">INTERESTED MOTORCYCLE</label>
+                  <select id="contact-bike-select" class="w-full bg-gray-900 border border-gray-800 rounded-xl px-4 py-3 text-xs text-gray-100 focus:border-luxury-gold focus:outline-none">
+                    <option value="">Select a model (Optional)</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-[10px] font-cinzel text-gray-400 mb-1">MESSAGE</label>
+                  <textarea rows="4" required placeholder="Tell us about your requirements or private viewing session request..." class="w-full bg-gray-900 border border-gray-800 rounded-xl px-4 py-3 text-xs text-gray-100 focus:border-luxury-gold focus:outline-none"></textarea>
+                </div>
+                <button type="submit" class="w-full py-4 bg-gradient-to-r from-gray-200 via-luxury-silver to-white hover:from-white hover:to-gray-200 text-black font-cinzel font-bold text-xs tracking-widest rounded-xl shadow-xl transition">
+                  TRANSMIT INQUIRY
+                </button>
+              </form>
+            </div>
+
+            <div class="lg:col-span-5 space-y-6">
+              <div class="bg-gray-950/80 backdrop-blur border border-gray-900 p-6 rounded-3xl space-y-4">
+                <div class="flex items-center gap-4 text-luxury-gold">
+                  <i data-lucide="map-pin" class="w-6 h-6 shrink-0"></i>
+                  <div>
+                    <div class="font-cinzel font-bold text-white text-sm">SHOWROOM LOCATION</div>
+                    <div class="text-xs text-gray-400">700 Cyberline Boulevard, Sector 7, Karachi / San Francisco</div>
+                  </div>
+                </div>
+                <div class="flex items-center gap-4 text-luxury-gold">
+                  <i data-lucide="phone" class="w-6 h-6 shrink-0"></i>
+                  <div>
+                    <div class="font-cinzel font-bold text-white text-sm">DIRECT CONCIERGE</div>
+                    <div class="text-xs text-gray-400">+1 (800) 892-4724 / +92 300 1234567</div>
+                  </div>
+                </div>
+                <div class="flex items-center gap-4 text-luxury-gold">
+                  <i data-lucide="clock" class="w-6 h-6 shrink-0"></i>
+                  <div>
+                    <div class="font-cinzel font-bold text-white text-sm">OPENING HOURS</div>
+                    <div class="text-xs text-gray-400">Mon - Sat: 09:00 AM - 09:00 PM | Sun: By Appointment</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="relative h-64 rounded-3xl overflow-hidden border border-gray-900 bg-gray-950 flex flex-col items-center justify-center p-6 text-center">
+                <div class="w-12 h-12 rounded-full bg-gray-900 border border-gray-800 text-luxury-gold flex items-center justify-center mb-2 animate-bounce">
+                  <i data-lucide="map-pin" class="w-6 h-6"></i>
+                </div>
+                <div class="font-cinzel font-bold text-white text-sm">SATELLITE LOCATION</div>
+                <div class="text-xs text-gray-400 mt-1">Interactive Google Maps Viewport</div>
+                <button onclick="alert('Navigating to Uzair Showroom...')" class="mt-4 px-4 py-2 bg-gray-900 border border-gray-800 text-luxury-gold text-xs font-cinzel rounded-xl hover:bg-gray-800 transition">
+                  GET DIRECTIONS
+                </button>
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+      </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-gray-950 border-t border-gray-900 py-16 relative z-10">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+        
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+          
+          <div class="space-y-4 md:col-span-1">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded-lg bg-gray-900 border border-gray-800 flex items-center justify-center text-luxury-gold">
+                <i data-lucide="shield" class="w-4 h-4"></i>
+              </div>
+              <span class="font-cinzel font-black text-lg text-white">UZair Showroom</span>
+            </div>
+            <p class="text-xs text-gray-400 leading-relaxed">
+              The premier luxury 3D motorcycle showroom experience.
+            </p>
+            <p class="font-cinzel text-xs text-luxury-gold italic font-bold">
+              “We are here to serve you.”
+            </p>
+          </div>
+
+          <div>
+            <h4 class="font-cinzel font-bold text-white text-xs tracking-widest mb-4 uppercase">NAVIGATE</h4>
+            <ul class="space-y-2 text-xs text-gray-400">
+              <li><a href="#hero" class="hover:text-luxury-gold">Welcome Hero</a></li>
+              <li><a href="#brands" class="hover:text-luxury-gold">10 Major Brands</a></li>
+              <li><a href="#featured" class="hover:text-luxury-gold">Featured Motorcycles</a></li>
+              <li><a href="#gallery" class="hover:text-luxury-gold">3D Product Gallery</a></li>
+              <li><a href="#about" class="hover:text-luxury-gold">Uzair Story</a></li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 class="font-cinzel font-bold text-white text-xs tracking-widest mb-4 uppercase">TOP BRANDS</h4>
+            <ul class="space-y-2 text-xs text-gray-400">
+              <li><a href="#gallery" onclick="app.filterByBrandName('Ducati')" class="hover:text-luxury-gold">Ducati Corse</a></li>
+              <li><a href="#gallery" onclick="app.filterByBrandName('BMW Motorrad')" class="hover:text-luxury-gold">BMW Motorrad</a></li>
+              <li><a href="#gallery" onclick="app.filterByBrandName('Kawasaki')" class="hover:text-luxury-gold">Kawasaki Ninja H2</a></li>
+              <li><a href="#gallery" onclick="app.filterByBrandName('Yamaha')" class="hover:text-luxury-gold">Yamaha Factory</a></li>
+              <li><a href="#gallery" onclick="app.filterByBrandName('Harley-Davidson')" class="hover:text-luxury-gold">Harley-Davidson CVO</a></li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 class="font-cinzel font-bold text-white text-xs tracking-widest mb-4 uppercase">SUPPORT & PORTAL</h4>
+            <p class="text-xs text-gray-400 mb-3">Concierge Hotline: +1 (800) 892-4724</p>
+            <a href="#/admin" onclick="app.openAdminRoute(event)" class="w-full py-2.5 bg-gray-900 border border-gray-800 hover:border-luxury-gold text-luxury-silver text-xs font-cinzel font-semibold rounded-xl transition flex items-center justify-center gap-2">
+              <i data-lucide="shield" class="w-4 h-4 text-luxury-gold"></i> ACCESS ADMIN PORTAL
+            </a>
+          </div>
+
+        </div>
+
+        <div class="border-t border-gray-900 pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-gray-500 gap-4 font-cinzel">
+          <div>&copy; 2026 Uzair Showroom. All rights reserved. Cinematic 3D Automotive Architecture.</div>
+          <div class="flex gap-6">
+            <a href="#" class="hover:text-gray-400">Privacy Policy</a>
+            <a href="#" class="hover:text-gray-400">Terms of Service</a>
+            <a href="#" class="hover:text-gray-400">Warranty Disclosures</a>
+          </div>
+        </div>
+
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- ================= 360° CINEMATIC PRODUCT DETAIL MODAL ================= -->
+  <div id="details-modal" class="fixed inset-0 z-50 bg-black/95 backdrop-blur-xl hidden flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
+    <div class="relative bg-gray-950 border border-gray-800 w-full max-w-6xl rounded-3xl overflow-hidden shadow-2xl my-8">
+      <button onclick="app.closeDetailsModal()" class="absolute top-4 right-4 z-20 w-10 h-10 rounded-full bg-gray-900 border border-gray-800 text-gray-300 hover:text-white flex items-center justify-center hover:bg-red-950 transition">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+      <div id="details-modal-content" class="p-6 sm:p-8">
+        <!-- Rendered by DetailsModal.js -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= CART DRAWER & CHECKOUT ================= -->
+  <div id="cart-drawer" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden justify-end">
+    <div class="w-full max-w-md bg-gray-950 border-l border-gray-900 h-full flex flex-col justify-between p-6">
+      <div>
+        <div class="flex items-center justify-between border-b border-gray-900 pb-4">
+          <div class="flex items-center gap-2">
+            <i data-lucide="shopping-bag" class="w-5 h-5 text-luxury-gold"></i>
+            <h3 class="font-cinzel font-bold text-white text-lg">YOUR CART</h3>
+          </div>
+          <button onclick="app.closeCart()" class="text-gray-400 hover:text-white">
+            <i data-lucide="x" class="w-5 h-5"></i>
+          </button>
+        </div>
+        <div id="cart-items" class="py-6 space-y-4 overflow-y-auto max-h-[60vh]"></div>
+      </div>
+      <div id="cart-summary" class="border-t border-gray-900 pt-4 space-y-4"></div>
+    </div>
+  </div>
+
+  <!-- CHECKOUT MODAL -->
+  <div id="checkout-modal" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-xl hidden flex items-center justify-center p-4">
+    <div class="relative bg-gray-950 border border-gray-800 w-full max-w-2xl rounded-3xl p-6 sm:p-8 space-y-6 shadow-2xl">
+      <button onclick="app.closeCheckoutModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+      <div id="checkout-content"></div>
+    </div>
+  </div>
+
+  <!-- PRE-ORDER MODAL -->
+  <div id="preorder-modal" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-xl hidden flex items-center justify-center p-4">
+    <div class="relative bg-gray-950 border border-gray-800 w-full max-w-xl rounded-3xl p-6 sm:p-8 space-y-6 shadow-2xl">
+      <button onclick="app.closePreOrderModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+      <div id="preorder-content"></div>
+    </div>
+  </div>
+
+  <!-- SEARCH MODAL -->
+  <div id="search-modal" class="fixed inset-0 z-50 bg-black/90 backdrop-blur-xl hidden flex flex-col items-center pt-20 px-4">
+    <div class="w-full max-w-3xl bg-gray-950 border border-gray-800 rounded-3xl p-6 space-y-6 shadow-2xl">
+      <div class="flex items-center justify-between border-b border-gray-900 pb-4">
+        <div class="flex items-center gap-3 flex-1">
+          <i data-lucide="search" class="w-6 h-6 text-luxury-gold"></i>
+          <input type="text" id="search-input" oninput="app.handleSearchInput(this.value)" placeholder="Search your dream motorcycle..." class="w-full bg-transparent text-lg text-white placeholder-gray-500 focus:outline-none font-cinzel" />
+        </div>
+        <button onclick="app.closeSearch()" class="text-gray-400 hover:text-white p-2">
+          <i data-lucide="x" class="w-6 h-6"></i>
+        </button>
+      </div>
+      <div id="search-results" class="max-h-[60vh] overflow-y-auto space-y-3">
+        <div class="text-center text-gray-500 text-xs py-8 font-cinzel">Search across brands, engine capacities & models</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= ISOLATED ADMIN PANEL VIEW (/admin) ================= -->
+  <div id="admin-view" class="fixed inset-0 z-50 bg-[#050508] hidden flex flex-col overflow-hidden">
+    <div class="bg-gray-950 border-b border-gray-900 px-6 py-4 flex items-center justify-between shrink-0">
+      <div class="flex items-center gap-3">
+        <div class="p-2 bg-gray-900 rounded-lg text-luxury-gold border border-gray-800">
+          <i data-lucide="shield-check" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <div class="font-cinzel font-bold text-white text-base">UZAIR SHOWROOM ADMIN PANEL</div>
+          <div class="text-[10px] text-gray-400 font-mono">Isolated Management Console & Inventory Telemetry</div>
+        </div>
+      </div>
+      <button onclick="app.exitAdminRoute()" class="px-4 py-2 bg-gray-900 border border-gray-800 text-gray-300 rounded-xl text-xs font-cinzel hover:bg-gray-800 transition flex items-center gap-2">
+        <i data-lucide="arrow-left" class="w-4 h-4 text-luxury-gold"></i> RETURN TO PUBLIC SHOWROOM
+      </button>
+    </div>
+
+    <div class="flex-1 flex overflow-hidden">
+      <!-- Admin Sidebar Nav -->
+      <div class="w-64 bg-gray-950 border-r border-gray-900 p-4 space-y-2 shrink-0 hidden md:block overflow-y-auto font-cinzel">
+        <button onclick="app.switchAdminTab('overview')" id="admin-tab-overview" class="admin-tab-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-semibold text-white bg-gray-900 border border-gray-800 transition">
+          <i data-lucide="layout-dashboard" class="w-4 h-4 text-luxury-gold"></i> Dashboard Overview
+        </button>
+        <button onclick="app.switchAdminTab('products')" id="admin-tab-products" class="admin-tab-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-semibold text-gray-400 hover:text-white hover:bg-gray-900 transition">
+          <i data-lucide="bike" class="w-4 h-4"></i> Products
+        </button>
+        <button onclick="app.switchAdminTab('inventory')" id="admin-tab-inventory" class="admin-tab-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-semibold text-gray-400 hover:text-white hover:bg-gray-900 transition">
+          <i data-lucide="boxes" class="w-4 h-4"></i> Inventory Control
+        </button>
+        <button onclick="app.switchAdminTab('orders')" id="admin-tab-orders" class="admin-tab-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-semibold text-gray-400 hover:text-white hover:bg-gray-900 transition">
+          <i data-lucide="package" class="w-4 h-4"></i> Orders
+        </button>
+        <button onclick="app.switchAdminTab('preorders')" id="admin-tab-preorders" class="admin-tab-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-semibold text-gray-400 hover:text-white hover:bg-gray-900 transition">
+          <i data-lucide="clock" class="w-4 h-4"></i> Pre-Orders
+        </button>
+        <button onclick="app.switchAdminTab('brands')" id="admin-tab-brands" class="admin-tab-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-semibold text-gray-400 hover:text-white hover:bg-gray-900 transition">
+          <i data-lucide="award" class="w-4 h-4"></i> Brands
+        </button>
+        <button onclick="app.switchAdminTab('payments')" id="admin-tab-payments" class="admin-tab-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-semibold text-gray-400 hover:text-white hover:bg-gray-900 transition">
+          <i data-lucide="credit-card" class="w-4 h-4"></i> Payment Config
+        </button>
+      </div>
+
+      <div id="admin-tab-content" class="flex-1 p-6 overflow-y-auto space-y-6">
+        <!-- Rendered by Admin.js -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Cache-Busted Scripts v9.0 -->
+  <script src="js/store.js?v=9.0"></script>
+  <script src="js/3d-engine.js?v=9.0"></script>
+  <script src="js/components/Brands.js?v=9.0"></script>
+  <script src="js/components/Gallery.js?v=9.0"></script>
+  <script src="js/components/DetailsModal.js?v=9.0"></script>
+  <script src="js/components/Categories.js?v=9.0"></script>
+  <script src="js/components/Featured.js?v=9.0"></script>
+  <script src="js/components/PreOrder.js?v=9.0"></script>
+  <script src="js/components/Checkout.js?v=9.0"></script>
+  <script src="js/components/Admin.js?v=9.0"></script>
+  <script src="js/app.js?v=9.0"></script>
+</body>
+</html>
